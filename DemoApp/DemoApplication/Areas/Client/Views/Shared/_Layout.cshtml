@@ -21,23 +21,9 @@
 
 <body>
     <div class="site-wrapper" id="top">
-        <!--=================================
-                    Navbar
-        ===================================== -->
-        @*<div class="form-group">
-            <label>Categories</label>
-            <select asp-for="Colors" asp-items="@(new SelectList(Model.Colors, nameof(Color.Id), nameof(Color.Name)))" class="form-select">                            </select>
-            <span asp-validation-for="Colors" class="text-danger"></span>
-        </div>*@
 
 
-            @foreach (var color in Model.Colors)
-            {
-                <a asp-route="client-color-add" asp-route-id="@color.Id">@color.Name</a>
-            }
-
-          
-         
+               
         <div class="site-header d-none d-lg-block">
             <div class="header-middle pt--10 pb--10">
                 <div class="container">

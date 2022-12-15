@@ -55,10 +55,10 @@
                     <h3>Newsletter Subscribe</h3>
                 </div>
                 <div class="newsletter-form mb--30">
-                    <form action="https://demo.hasthemes.com/pustok-preview/pustok/php/mail.php">
-                        <input type="email" class="form-control" placeholder="Enter Your Email Address Here...">
-                        <button class="btn btn--primary w-100">Subscribe</button>
-                    </form>
+
+                    <input id="txtEmail" type="email" class="form-control" placeholder="Enter Your Email Address Here...">
+                    <button type="submit" id="btnSub" class="btn btn--primary w-100">Subscribe</button>
+                    <a asp-route="client-subscribers-add"></a>
                 </div>
                 <div class="social-block">
                     <h3 class="title">STAY CONNECTED</h3>
@@ -96,3 +96,7 @@
         </div>
     </div>
 </footer>
+
+
+
+

@@ -20,6 +20,7 @@ namespace DemoApplication.Database
         public DbSet<Category> Categories { get; set; }
         public DbSet<BookCategory> BookCategories { get; set; }
         public DbSet<Color> Colors { get; set; }
+        public DbSet<Subscribes> Subscribes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

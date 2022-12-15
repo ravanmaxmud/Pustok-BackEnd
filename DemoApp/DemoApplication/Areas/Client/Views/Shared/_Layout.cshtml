@@ -1,10 +1,12 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@using DemoApplication.Areas.Client.ViewComponents;
+@using DemoApplication.Areas.Client.ViewModels.Basket
+@using DemoApplication.Areas.Client.ViewCompanents
+@using System.Text.Json
 @model IndexViewModel
+
 
 <!DOCTYPE html>
 <html lang="en">
-
 
 <head>
     <meta charset="utf-8" />
@@ -23,7 +25,7 @@
     <div class="site-wrapper" id="top">
 
 
-               
+
         <div class="site-header d-none d-lg-block">
             <div class="header-middle pt--10 pb--10">
                 <div class="container">
@@ -241,13 +243,53 @@
             </div>
         </div>
     </div>
+     <div id="toasterAccept" class="bg-success d-inline">
+         <span class="text-light">Email Succesifully Aded</span>
+     </div>
+    <div id="toasterError" class="bg-danger d-inline">
+        <span class="text-light">Somethins Went Wrong</span>
+     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+
+
+        $(document).ready(function () {
+            $("#btnSub").click(function () {
+                let aHref = this.nextElementSibling.href;
+                $.ajax(
+                    {
+                        type: "POST", //HTTP POST Method
+                        url: aHref, // Controller/View
+                        data: { //Passing data
+                            Email: $("#txtEmail").val(), //Reading text box values using Jquer
+                        }
+
+                    });
+
+                if (response.status == 200) {
+                    document.getElementById("toasterAccept").style.opacity = '1'
+                    setTimeout(() => {
+                        document.getElementById("toasterAccept").style.opacity = '0'
+                    }, 1000)
+                }
+                if (response.status == 400) {
+                    document.getElementById("toasterError").style.opacity = '1'
+                    setTimeout(() => {
+                        document.getElementById("toasterError").style.opacity = '0'
+                    }, 1000)
+                }
+            });
+        });
+
+    </script>
 
     <script src="~/client/assets/js/plugins.js" asp-append-version="true"></script>
     <script src="~/client/assets/js/ajax-mail.js" asp-append-version="true"></script>
     <script src="~/client/assets/js/custom.js" asp-append-version="true"></script>
-    <script src="~/client/assets/js/cookie-management.js" asp-append-version="true"></script>
+
     <script src="~/client/assets/js/basket-management.js" asp-append-version="true"></script>
+    <script src="~/client/assets/js/cookie-management.js" asp-append-version="true"></script>
     <script src="~/client/assets/js/Color.js" asp-append-version="true"></script>
 
     @RenderSection("script", required : false)

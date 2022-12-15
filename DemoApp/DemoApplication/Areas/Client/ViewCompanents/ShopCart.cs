@@ -1,13 +1,12 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Basket;
-using DemoApplication.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace DemoApplication.Areas.Client.ViewComponents
+namespace DemoApplication.Areas.Client.ViewCompanents
 {
     public class ShopCart : ViewComponent
     {
-        public IViewComponentResult Invoke(List<ProductCookieViewModel>? viewModels = null)
+        public IViewComponentResult Invoke(List<ProductCookieViewModel>? models = null)
         {
             var productsCookieValue = HttpContext.Request.Cookies["products"];
 
@@ -18,9 +17,9 @@ namespace DemoApplication.Areas.Client.ViewComponents
                 productsCookieViewModel = JsonSerializer.Deserialize<List<ProductCookieViewModel>>(productsCookieValue);
             }
 
-            if (viewModels is not null)
+            if (models is not null)
             {
-                productsCookieViewModel = viewModels;
+                productsCookieViewModel = models;
             }
 
             return View(productsCookieViewModel);

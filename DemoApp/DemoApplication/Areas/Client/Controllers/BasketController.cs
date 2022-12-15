@@ -1,4 +1,5 @@
-﻿using DemoApplication.Areas.Client.ViewModels.Basket;
+﻿using DemoApplication.Areas.Client.ViewCompanents;
+using DemoApplication.Areas.Client.ViewModels.Basket;
 using DemoApplication.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace DemoApplication.Areas.Client.Controllers
             _dataContext = dataContext;
         }
 
-        [HttpGet("baske/{id}", Name = "client-basket-add")]
+        [HttpGet("basket/{id}", Name = "client-basket-add")]
         public async Task<IActionResult> AddProductAsync([FromRoute] int id)
         {
             var products = await _dataContext.Books.FirstOrDefaultAsync(p => p.Id == id);
@@ -26,11 +27,15 @@ namespace DemoApplication.Areas.Client.Controllers
             {
                 return NotFound();
             }
-
+        
             var productsCookieValue = HttpContext.Request.Cookies["products"];
+
+            var productViewModel = new List<ProductCookieViewModel>();
+
+
             if (productsCookieValue is null)
             {
-                var productViewModel = new List<ProductCookieViewModel>()
+                 productViewModel = new List<ProductCookieViewModel>()
                 {
                    new ProductCookieViewModel(products.Id,products.Title,String.Empty,1,products.Price,products.Price)
                 };
@@ -39,14 +44,14 @@ namespace DemoApplication.Areas.Client.Controllers
             }
             else
             {
-                var producktCookieViewModel = JsonSerializer.Deserialize
-                                                                <List<ProductCookieViewModel>>(productsCookieValue);
+                productViewModel = JsonSerializer.Deserialize<List<ProductCookieViewModel>>(productsCookieValue);
+                                                                
 
-                var cookieViewModel = producktCookieViewModel!.FirstOrDefault(c => c.Id == id);
+                var cookieViewModel = productViewModel!.FirstOrDefault(c => c.Id == id);
 
                 if (cookieViewModel is null)
                 {
-                    producktCookieViewModel!.Add(new ProductCookieViewModel(products.Id, products.Title, String.Empty, 1, products.Price, products.Price));
+                    productViewModel!.Add(new ProductCookieViewModel(products.Id, products.Title, String.Empty, 1, products.Price, products.Price));
                 }
                 else
                 {
@@ -54,44 +59,45 @@ namespace DemoApplication.Areas.Client.Controllers
                     cookieViewModel.Total = cookieViewModel.Quantity * cookieViewModel.Price;
 
                 }
-                HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(producktCookieViewModel));
+                HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(productViewModel));
 
             }
 
-            return RedirectToRoute("client-home-index");
-
+            //return RedirectToRoute("client-home-index");
+            return ViewComponent(nameof(ShopCart), productViewModel);
         }
 
-        [HttpGet("baske/{id}", Name = "client-basket-delete")]
+
+
+        [HttpGet("basket-delete/{id}", Name = "client-basket-delete")]
         public async Task<IActionResult> DeleteProductAsync([FromRoute] int id)
         {
+
             var products = await _dataContext.Books.FirstOrDefaultAsync(b => b.Id == id);
             if (products is null)
             {
                 return NotFound();
             }
+            var producktCookieViewModel = new List<ProductCookieViewModel>();
 
             var productCookieValue = HttpContext.Request.Cookies["products"];
+
 
             if (productCookieValue is null)
             {
                 return NotFound();
             }
 
-            var producktCookieViewModel = JsonSerializer.Deserialize
-                                                           <List<ProductCookieViewModel>>(productCookieValue);
+             producktCookieViewModel = JsonSerializer.Deserialize
+                                             <List<ProductCookieViewModel>>(productCookieValue);
+
 
             producktCookieViewModel!.RemoveAll(b => b.Id == id);
 
+
             HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(producktCookieViewModel));
 
-
-
-
-
-
-
-            return RedirectToRoute("client-home-index");
+            return ViewComponent(nameof(ShopCart), producktCookieViewModel);
         }
 
     }

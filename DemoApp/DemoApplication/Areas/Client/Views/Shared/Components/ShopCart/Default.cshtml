@@ -15,7 +15,7 @@
 </div>
 <div class="cart-dropdown-block">
     <div class=" single-cart-block " id="basket-cart-mini">
-        @foreach (var productCookieViewModel in Model)
+        @foreach (var product in Model)
         {
             <div class="cart-product">
                 <a href="product-details.html" class="image">
@@ -24,11 +24,11 @@
                 <div class="content">
                     <h3 class="title">
                         <a href="product-details.html">
-                            @productCookieViewModel.Title
+                            @product.Title
                         </a>
                     </h3>
-                    <p class="price"><span class="qty">@productCookieViewModel.Quantity ×</span> £@productCookieViewModel.Price</p>
-                    <a data-id="@productCookieViewModel.Id" class="cross-btn remove-product-to-basket-btn"><i class="fas fa-times"></i></a>
+                    <p class="price"><span class="qty">@product.Quantity ×</span> £@product.Price</p>
+                    <a asp-route="client-basket-delete" asp-route-id="@product.Id" data-id="@product.Id" class="cross-btn remove-product-to-basket-btn">X</a>
                 </div>
             </div>
         }

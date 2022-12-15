@@ -16517,8 +16517,31 @@ input[type="number"] {
     padding: 6px 0;
     text-align: left; }
 
+
+#toasterAccept {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 10px;
+    color: blue;
+    padding: 20px 30px;
+    opacity: 0;
+    transition: 0.5s;
+}
+#toastertoasterError {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 10px;
+    color: blue;
+    padding: 20px 30px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
 .cart-block {
-  padding: 10px 0; }
+    padding: 10px 0;
+}
   .cart-block:before {
     content: "\f23d";
     font-family: "Font Awesome 5 Brands";

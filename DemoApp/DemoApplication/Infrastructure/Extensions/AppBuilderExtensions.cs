@@ -5,6 +5,9 @@
         public static void ConfigureMiddlewarePipeline(this WebApplication app)
         {
             app.UseStaticFiles();
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",

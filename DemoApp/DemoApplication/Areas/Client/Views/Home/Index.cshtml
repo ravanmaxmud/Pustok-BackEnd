@@ -170,8 +170,8 @@ ARTS & PHOTOGRAPHY BOOKS
                                         <a href="compare.html" class="single-btn">
                                             <i class="fas fa-random"></i>
                                         </a>
-                                        <a href="#" data-toggle="modal" data-target="#quickModal"
-                                       class="single-btn">
+                                        <a asp-route="book-getbook" asp-route-id="@book.Id"
+                                       class="single-btn show-book-modal">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>
@@ -187,6 +187,5 @@ ARTS & PHOTOGRAPHY BOOKS
         </div>
     </div>
 </section>
-
 <partial name="Partials/_FooterPartial" />
 

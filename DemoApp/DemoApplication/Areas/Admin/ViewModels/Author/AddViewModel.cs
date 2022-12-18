@@ -2,24 +2,21 @@
 
 namespace DemoApplication.Areas.Admin.ViewModels.Author
 {
-    public class ListItemViewModel
+    public class AddViewModel
     {
-        public int Id { get; set; }
-
         [Required]
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
 
-        public ListItemViewModel(int id, string name, string lastName)
+        public AddViewModel(string firstName, string lastName)
         {
-            Id = id;
-            FirstName = name;
+            FirstName = firstName;
             LastName = lastName;
         }
-        public ListItemViewModel()
-        {
 
+        public AddViewModel()
+        {
         }
     }
 }

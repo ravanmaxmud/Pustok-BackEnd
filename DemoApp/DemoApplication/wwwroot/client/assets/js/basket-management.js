@@ -46,3 +46,19 @@ $(document).on("click", ".remove-product-to-basket-btn", function (e)
         })
 })
 
+$(document).on("click", ".show-book-modal", function (e) {
+    e.preventDefault();
+
+    var url = e.target.href;
+    console.log(url)
+
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            $('.product-details-modal').html(data);
+            console.log(data)
+        })
+
+    $("#quickModal").modal("show");
+})
+

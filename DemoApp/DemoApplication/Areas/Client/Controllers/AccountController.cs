@@ -1,5 +1,6 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Account;
 using DemoApplication.Database;
+using DemoApplication.Database.Models;
 using DemoApplication.Services.Abstracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -46,12 +47,82 @@ namespace DemoApplication.Areas.Client.Controllers
         }
 
         [HttpGet("address", Name = "client-account-address")]
-        public IActionResult Address()
+        public async Task<IActionResult> Address()
         {
             var user = _userService.CurrentUser;
 
-            return View();
+            var address = await _dataContext.Address.FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (address is null)
+            {
+                return RedirectToRoute("client-account-edit-address",new EditAddressViewModel());
+            }
+
+            var model = new AddressListViewModel 
+            {
+               User = $"{address.User.FirstName} {address.User.LastName}",
+               PhoneNumber = address.PhoneNum,
+               Title = address.Title
+            };
+            return View(model);
         }
+        [HttpGet("editAddress", Name = "client-account-edit-address")]
+        public async Task<IActionResult> EditAddress()
+        {
+            var user = _userService.CurrentUser;
+
+            var address = await _dataContext.Address.FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (address is null)
+            {
+                return View(new EditAddressViewModel());
+            }
+
+
+            var model = new EditAddressViewModel
+            {
+                PhoneNumber = address.PhoneNum,
+                Title = address.Title
+            };
+            return View(model);
+        }
+
+        [HttpPost("editAddress", Name = "client-account-edit-address")]
+        public async Task<IActionResult> EditAddress(EditAddressViewModel model)
+        {
+            var user = _userService.CurrentUser;
+
+            var address = await _dataContext.Address.FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (address is not null)
+            {
+              address.PhoneNum = model.PhoneNumber;
+                address.Title = model.Title;
+
+            }
+            else
+            {
+                var newAddress = new Addres 
+                {
+                  UserId=user.Id,
+                  PhoneNum = model.PhoneNumber,
+                  Title = model.Title
+                };
+                await _dataContext.Address.AddAsync(newAddress);
+            }
+
+            await _dataContext.SaveChangesAsync();
+
+            return RedirectToRoute("client-account-address");
+        }
+
+        //[HttpPost("address", Name = "client-account-address")]
+        //public IActionResult Address()
+        //{
+        //    var user = _userService.CurrentUser;
+
+        //    return View();
+        //}
 
         [HttpGet("details", Name = "client-account-details")]
         public async Task<IActionResult> Details()

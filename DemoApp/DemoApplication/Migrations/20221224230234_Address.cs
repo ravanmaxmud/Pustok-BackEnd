@@ -4,7 +4,7 @@
 
 namespace DemoApplication.Migrations
 {
-    public partial class Adress : Migration
+    public partial class Address : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

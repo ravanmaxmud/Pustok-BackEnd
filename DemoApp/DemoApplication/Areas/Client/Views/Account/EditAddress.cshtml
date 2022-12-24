@@ -1,0 +1,15 @@
+﻿@using DemoApplication.Areas.Client.ViewModels.Account
+@model EditAddressViewModel
+<form method="post" asp-route="client-account-edit-address">
+	<div class="row">
+		<div class="col-lg-6 col-12  mb--30">
+			<input asp-for="Title" id="first-name" placeholder="First Name">
+		</div>
+		<div class="col-lg-6 col-12  mb--30">
+			<input asp-for="PhoneNumber" id="last-name" placeholder="Last Name">
+		</div>
+		<div class="col-12 mb-3">
+			<button type="submit" class="btn btn--primary">Save Changes</button>
+		</div>
+	</div>
+</form>

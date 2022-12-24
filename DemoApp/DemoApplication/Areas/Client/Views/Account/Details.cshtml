@@ -1,0 +1,16 @@
+﻿@using DemoApplication.Areas.Client.ViewModels.Account
+@model UserViewModel
+
+<div class="col-lg-9 col-12 mt--30 mt-lg--0">
+	<div class="myaccount-content">
+		<h3>Account Details</h3>
+		<div class="account-details-form">
+
+			@Html.Partial("~/Areas/Client/Views/Shared/Partials/_UserDetailsPartial.cshtml",Model)
+
+			@Html.Partial("~/Areas/Client/Views/Shared/Partials/_UserPasswordDetailsViewModel.cshtml",new UserPasswordViewModel())
+
+		</div>
+	</div>
+</div>
+

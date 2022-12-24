@@ -27,7 +27,6 @@ namespace DemoApplication.Areas.Client.Controllers
                 Books = await _dbContext.Books
                 .Select(b => new BookListItemViewModel(b.Id, b.Title, $"{b.Author.FirstName} {b.Author.LastName}", b.Price))
                 .ToListAsync(),
-                Colors = await _dbContext.Colors.Select(c=> new Color(c.Id,c.Name)).ToListAsync()
             };
 
             return View(model);

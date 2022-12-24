@@ -8,7 +8,7 @@ using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 using Nancy.Json;
 using DemoApplication.Areas.Admin.ViewCompanents;
 using DemoApplication.Areas.Admin.ViewModels.Book.Add;
-
+using Nancy;
 
 namespace DemoApplication.Areas.Admin.Controllers
 {
@@ -32,38 +32,62 @@ namespace DemoApplication.Areas.Admin.Controllers
             return View(model);
         }
 
-        [HttpPost("add", Name = "admin-author-add")]
-        public async Task<IActionResult> Add(ViewModels.Author.AddViewModel model)
+        [HttpPost("add", Name = "admin-author-Add")]
+        public async Task<IActionResult> Add(Admin.ViewModels.Author.AddViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
-            }
+                var addModel = ViewComponent(nameof(AddModal),model);
+                addModel.StatusCode = (int)HttpStatusCode.BadRequest;
 
+                return addModel;
+            }
             var author = new Author {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                CreatedAt = DateTime.Now
-
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
             };
 
-            await _dataContext.Authors.AddAsync(author);
-       
+             _dataContext.Authors.Add(author);
+
             await _dataContext.SaveChangesAsync();
 
+            var responseModel = new ListItemViewModel(author.Id,author.FirstName,author.LastName);
 
+            var listItemPartialView = PartialView("Partials/Author/_ListItem", responseModel);
+              listItemPartialView.StatusCode = (int)HttpStatusCode.Created;
 
-            var id = author.Id;
-
-            return Created("admin-author-add", id);
-
+            return listItemPartialView;
         }
 
 
-        [HttpDelete("delete/{id}", Name = "admin-author-delete")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+
+        [HttpGet("update/{id}", Name = "admin-author-update")]
+        public async Task<IActionResult> Update([FromRoute] int id)
         {
-            var author = await _dataContext.Authors.FirstOrDefaultAsync(b => b.Id == id);
+            var author = await _dataContext.Authors.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UpdateViewModel {
+                FirstName = author.FirstName,
+                LastName= author.LastName,
+            };
+
+            return ViewComponent(nameof(UpdateModalAuthor),model);
+        }
+
+
+
+        [HttpDelete("delete", Name = "admin-author-delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var author = await _dataContext.Authors.FirstOrDefaultAsync(a=> a.Id == id);
+
             if (author is null)
             {
                 return NotFound();
@@ -73,54 +97,7 @@ namespace DemoApplication.Areas.Admin.Controllers
             await _dataContext.SaveChangesAsync();
 
             return NoContent();
-            
         }
-
-
-
-        [HttpGet("update/{id}", Name = "admin-author-update")]
-        public async Task<IActionResult> Update([FromRoute] int id)
-        {
-            var author = await _dataContext.Authors.FirstOrDefaultAsync(b => b.Id == id);
-            if (author is null)
-            {
-                return NotFound();
-            }
-
-            var model = new UpdateViewModel {
-               FirstName = author.FirstName,
-               LastName= author.LastName
-            };
-
-            return View(model);
-        }
-
-        [HttpPut("update/{id}", Name = "admin-author-update")]
-        public async Task<IActionResult> Update(UpdateViewModel model)
-        {
-            var author = await _dataContext.Authors.FirstOrDefaultAsync(a => a.Id == model.Id);
-
-
-            if (author is null)
-            {
-                return NotFound();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            author.FirstName = model.FirstName;
-            author.LastName = model.LastName;
-            author.UpdatedAt = DateTime.Now;
-
-           
-            await _dataContext.SaveChangesAsync();
-
-            return StatusCode(200);
-        }
-
 
 
     }

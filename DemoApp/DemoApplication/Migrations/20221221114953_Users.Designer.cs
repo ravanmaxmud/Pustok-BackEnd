@@ -4,6 +4,7 @@ using DemoApplication.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DemoApplication.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221221114953_Users")]
+    partial class Users
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,33 +23,6 @@ namespace DemoApplication.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("DemoApplication.Database.Models.Addres", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("PhoneNum")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Address", (string)null);
-                });
 
             modelBuilder.Entity("DemoApplication.Database.Models.Author", b =>
                 {
@@ -74,63 +49,6 @@ namespace DemoApplication.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Authors", (string)null);
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.Basket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("baskets", (string)null);
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.BasketProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("BasketId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BasketId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("basket-products", (string)null);
                 });
 
             modelBuilder.Entity("DemoApplication.Database.Models.Book", b =>
@@ -308,48 +226,7 @@ namespace DemoApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.Addres", b =>
-                {
-                    b.HasOne("DemoApplication.Database.Models.User", "User")
-                        .WithOne("Address")
-                        .HasForeignKey("DemoApplication.Database.Models.Addres", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.Basket", b =>
-                {
-                    b.HasOne("DemoApplication.Database.Models.User", "User")
-                        .WithOne("Basket")
-                        .HasForeignKey("DemoApplication.Database.Models.Basket", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.BasketProduct", b =>
-                {
-                    b.HasOne("DemoApplication.Database.Models.Basket", "Basket")
-                        .WithMany("BasketProducts")
-                        .HasForeignKey("BasketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DemoApplication.Database.Models.Book", "Book")
-                        .WithMany("BasketProducts")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Basket");
-
-                    b.Navigation("Book");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DemoApplication.Database.Models.Book", b =>
@@ -396,15 +273,8 @@ namespace DemoApplication.Migrations
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("DemoApplication.Database.Models.Basket", b =>
-                {
-                    b.Navigation("BasketProducts");
-                });
-
             modelBuilder.Entity("DemoApplication.Database.Models.Book", b =>
                 {
-                    b.Navigation("BasketProducts");
-
                     b.Navigation("BookCategories");
                 });
 
@@ -413,13 +283,6 @@ namespace DemoApplication.Migrations
                     b.Navigation("BookCategories");
 
                     b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("DemoApplication.Database.Models.User", b =>
-                {
-                    b.Navigation("Address");
-
-                    b.Navigation("Basket");
                 });
 #pragma warning restore 612, 618
         }

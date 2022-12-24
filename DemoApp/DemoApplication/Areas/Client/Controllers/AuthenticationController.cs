@@ -1,48 +1,79 @@
-﻿//using DemoApplication.Database;
-//using DemoApplication.Database.Models;
-//using DemoApplication.ViewModels.Authentication;
-//using Microsoft.AspNetCore.Mvc;
-//using System.Data;
+﻿using DemoApplication.Areas.Client.ActionFilter;
+using DemoApplication.Areas.Client.ViewModels.Authentication;
+using DemoApplication.Database;
+using DemoApplication.Database.Models;
+using DemoApplication.Services.Abstracts;
+using Microsoft.AspNetCore.Mvc;
+using XAct.Users;
 
-//namespace DemoApplication.Controllers
-//{
-//    public class AuthenticationController : Controller
-//    {
-//        private readonly DataContext _dbContext;
+namespace DemoApplication.Controllers
+{
+    [Area("client")]
+    [Route("authentication")]
+    public class AuthenticationController : Controller
+    {
+        private readonly DataContext _dbContext;
+        private readonly IUserService _userService;
 
-//        public AuthenticationController(DataContext dbContext)
-//        {
-//            _dbContext = dbContext;
-//        }
+        public AuthenticationController(DataContext dbContext, IUserService userService)
+        {
+            _dbContext = dbContext;
+            _userService = userService;
+        }
 
-//        public ViewResult Login()
-//        {
-//            return View();
-//        }
+        [HttpGet("login",Name ="client-auth-login")]
+        [ServiceFilter(typeof(ValidationCurrentUserAttribute))]
+        public async Task<IActionResult> Login()
+        {
+            return View();
+        }
+        [HttpPost("login", Name = "client-auth-login")]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-//        [HttpGet]
-//        public ViewResult Register()
-//        {
-//            return View();
-//        }
+            if (!await _userService.CheckPasswordAsync(model!.Email, model!.Password))
+            {
+                ModelState.AddModelError(String.Empty, "Email or password is not correct");
+                return View(model);
+            }
 
-//        [HttpPost]
-//        public ViewResult Register(RegisterViewModel viewModel)
-//        {
-//            if (!ModelState.IsValid)
-//            {
-//                return View(viewModel);
-//            }
+            await _userService.SignInAsync(model!.Email, model!.Password);
 
-//            //_dbContext.Users.Add(new Database.Models.User
-//            //{
-//            //    Id = TablePkAutoincrement.UserCounter,
-//            //    Email = viewModel.Email,
-//            //    Password = viewModel.Password
-//            //});
-//            //add to db
+            return RedirectToRoute("client-home-index");
+        }
 
-//            return View();
-//        }
-//    }
-//}
+        [HttpGet("logout", Name = "client-auth-logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _userService.SignOutAsync();
+
+            return RedirectToRoute("client-home-index");
+        }
+
+
+        [HttpGet("register", Name = "client-auth-register")]
+        [ServiceFilter(typeof(ValidationCurrentUserAttribute))]
+        public IActionResult Register()
+        { 
+            return View();
+        }
+
+        [HttpPost("register", Name = "client-auth-register")]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            await _userService.CreateAsync(model);
+
+            return RedirectToRoute("client-home-index");
+        }
+
+    }
+}

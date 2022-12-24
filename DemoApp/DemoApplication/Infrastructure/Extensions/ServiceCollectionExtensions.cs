@@ -1,4 +1,5 @@
-﻿using DemoApplication.Database;
+﻿using DemoApplication.Areas.Client.ActionFilter;
+using DemoApplication.Database;
 using DemoApplication.Infrastructure.Configurations;
 using DemoApplication.Options;
 using DemoApplication.Services.Abstracts;
@@ -17,6 +18,10 @@ namespace DemoApplication.Infrastructure.Extensions
         {
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<ValidationCurrentUserAttribute>();
 
             services.ConfigureMvc();
             services.AddControllers().AddJsonOptions(x =>

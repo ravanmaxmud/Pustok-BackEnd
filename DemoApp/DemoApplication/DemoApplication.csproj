@@ -1090,6 +1090,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="MailKit" Version="3.4.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.11" />
@@ -1108,6 +1109,7 @@
     <PackageReference Include="MimeKit" Version="3.4.3" />
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Polly" Version="7.2.3" />
+    <PackageReference Include="XAct.Core.PCL" Version="0.0.5014" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,9 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@using DemoApplication.Areas.Client.ViewModels.Basket
+﻿@using DemoApplication.Areas.Client.ViewModels.Basket;
 @using DemoApplication.Areas.Client.ViewCompanents
 @using System.Text.Json
-@model IndexViewModel
+
+@using DemoApplication.Services.Abstracts
+@inject IUserService userService
 
 
 <!DOCTYPE html>
@@ -23,12 +24,6 @@
 
 <body>
     <div class="site-wrapper" id="top">
-
-
-        @foreach (var item in Model.Colors)
-        {
-            <a asp-route="client-color-add" asp-route-id="@item.Id">@item.Name</a>
-        }
         <div class="site-header d-none d-lg-block">
             <div class="header-middle pt--10 pb--10">
                 <div class="container">
@@ -57,6 +52,12 @@
                                     </li>
                                     <li class="menu-item">
                                         <a asp-controller="home" asp-action="contact">Contact</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a asp-controller="account" asp-action="dashboard">DashBoard</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a asp-controller="shop" asp-action="index">Shop</a>
                                     </li>
                                 </ul>
                             </div>
@@ -90,10 +91,18 @@
                             <div class="main-navigation flex-lg-right">
                                 <div class="cart-widget">
                                     <div class="login-block">
-                                        <a asp-controller="authentication" asp-action="login" class="font-weight-bold">Login</a>
+                                        @if (userService.IsAuthenticated)
+                                        {
+                                            <a asp-route="client-account-dashboard">@userService.GetCurrentUserFullName()</a>
+                                        }
+                                        else
+                                        {
+                                        <a asp-route="client-auth-login" class="font-weight-bold">Login</a>
                                         <br>
                                         <span>or</span>
-                                        <a asp-controller="authentication" asp-action="register">Register</a>
+                                        <a asp-route="client-auth-register">Register</a>
+                                        }
+                                       
                                     </div>
                                     <div class="cart-block">
                                         @await Component.InvokeAsync(nameof(ShopCart));
@@ -174,6 +183,10 @@
                     });
             });
         });
+
+        $('.a-tag a').filter(function () {
+            return this.href === location.href;
+        }).addClass('active');
 
     </script>
 

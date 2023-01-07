@@ -1,12 +1,15 @@
-﻿using DemoApplication.Areas.Client.ActionFilter;
-using DemoApplication.Areas.Client.ViewModels.Authentication;
+﻿using DemoApplication.Areas.Client.ViewModels.Authentication;
+using DemoApplication.Areas.Client.ActionFilter;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
 using DemoApplication.Services.Abstracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using XAct.Users;
+using Microsoft.EntityFrameworkCore;
+using DemoApplication.Contracts.Identity;
 
-namespace DemoApplication.Controllers
+namespace DemoApplication.Areas.Client.Controllers
 {
     [Area("client")]
     [Route("authentication")]
@@ -14,13 +17,13 @@ namespace DemoApplication.Controllers
     {
         private readonly DataContext _dbContext;
         private readonly IUserService _userService;
-
-        public AuthenticationController(DataContext dbContext, IUserService userService)
+        public AuthenticationController(DataContext dataContext , IUserService userService)
         {
-            _dbContext = dbContext;
+            _dbContext = dataContext;
             _userService = userService;
         }
 
+   
         [HttpGet("login",Name ="client-auth-login")]
         [ServiceFilter(typeof(ValidationCurrentUserAttribute))]
         public async Task<IActionResult> Login()
@@ -39,6 +42,12 @@ namespace DemoApplication.Controllers
             {
                 ModelState.AddModelError(String.Empty, "Email or password is not correct");
                 return View(model);
+            }
+
+            if (await _dbContext.Users.AnyAsync(u=> u.Email == model.Email && u.Roles.Name ==RoleNames.ADMIN))
+            {
+                await _userService.SignInAsync(model!.Email, model!.Password,RoleNames.ADMIN);
+                return RedirectToRoute("admin-auth-login");
             }
 
             await _userService.SignInAsync(model!.Email, model!.Password);

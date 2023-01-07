@@ -1,7 +1,10 @@
 ﻿using DemoApplication.Areas.Admin.ViewModels.Book;
 using DemoApplication.Areas.Admin.ViewModels.Book.Add;
+using DemoApplication.Contracts.File;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
+using DemoApplication.Services.Abstracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,15 +15,18 @@ namespace DemoApplication.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/book")]
+    [Authorize(Roles = "admin")]
     public class BookController : Controller
     {
         private readonly DataContext _dataContext;
         private readonly ILogger<BookController> _logger;
+        private readonly IFileService _fileService;
 
-        public BookController(DataContext dataContext, ILogger<BookController> logger)
+        public BookController(DataContext dataContext, ILogger<BookController> logger,IFileService fileService)
         {
             _dataContext = dataContext;
             _logger = logger;
+            _fileService = fileService;
         }
 
 
@@ -49,7 +55,7 @@ namespace DemoApplication.Areas.Admin.Controllers
         #region Add
 
         [HttpGet("add", Name = "admin-book-add")]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
             var model = new AddViewModel
             {
@@ -65,7 +71,7 @@ namespace DemoApplication.Areas.Admin.Controllers
         }
 
         [HttpPost("add", Name = "admin-book-add")]
-        public IActionResult Add(AddViewModel model)
+        public async Task<IActionResult> Add(AddViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -89,8 +95,11 @@ namespace DemoApplication.Areas.Admin.Controllers
 
             }
 
+            var imageNameInSystem = await _fileService.UploadAsync(model.Image,UploadDirectory.Book);
 
-            AddBook();
+
+
+            AddBook(model.Image.FileName,imageNameInSystem);
 
             return RedirectToRoute("admin-book-list");
 
@@ -110,7 +119,7 @@ namespace DemoApplication.Areas.Admin.Controllers
                 return View(model);
             }
 
-            void AddBook()
+            void AddBook(string imageName,string imageNameInSystem)
             {
                 var book = new Book
                 {
@@ -118,6 +127,8 @@ namespace DemoApplication.Areas.Admin.Controllers
                     Price = model.Price,
                     CreatedAt = DateTime.Now,
                     AuthorId = model.AuthorId,
+                    ImageName = imageName,
+                    ImageNameFileSystem = imageNameInSystem
                 };
 
                 _dataContext.Books.Add(book);

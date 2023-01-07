@@ -1,11 +1,13 @@
 ﻿using DemoApplication.Areas.Admin.ViewModels.Subscribers;
 using DemoApplication.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApplication.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/subscribers")]
+    [Authorize(Roles = "admin")]
     public class SubscribersController : Controller
     {
         private readonly DataContext _dataContext;

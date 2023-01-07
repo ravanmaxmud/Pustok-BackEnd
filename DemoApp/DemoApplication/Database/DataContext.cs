@@ -25,6 +25,7 @@ namespace DemoApplication.Database
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketProduct> BasketProducts { get; set; }
         public DbSet<Addres> Address { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
 
 

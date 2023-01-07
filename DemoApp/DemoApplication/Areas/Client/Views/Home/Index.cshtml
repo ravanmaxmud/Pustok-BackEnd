@@ -159,11 +159,11 @@ ARTS & PHOTOGRAPHY BOOKS
                                         <img src="~/client/assets/image/products/product-1.jpg" alt="">
                                     </a>
                                     <div class="hover-btns">
-                                      <a asp-route="client-basket-add" 
-                                            asp-route-id="@book.Id"
-                                           data-id="@book.Id"
-                                           class="add-product-to-basket-btn single-btn">
-                                           Add
+                                        <a asp-route="client-basket-add"
+                                       asp-route-id="@book.Id"
+                                       data-id="@book.Id"
+                                       class="add-product-to-basket-btn single-btn">
+                                            Add
                                         </a>
                                         <a href="wishlist.html" class="single-btn">
                                             <i class="fas fa-heart"></i>
@@ -171,8 +171,8 @@ ARTS & PHOTOGRAPHY BOOKS
                                         <a href="compare.html" class="single-btn">
                                             <i class="fas fa-random"></i>
                                         </a>
-                                        <a asp-route="book-getbook" asp-route-id="@book.Id"
-                                       class="single-btn show-book-modal">
+                                        <a href="#" data-toggle="modal" data-target="#quickModal"
+                                       class="single-btn">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>

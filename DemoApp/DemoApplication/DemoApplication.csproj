@@ -18,10 +18,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Areas\Admin\Views\User\Update.cshtml" />
     <Content Remove="Areas\Client\Views\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Areas\Admin\Views\User\Update.cshtml" />
+    <None Include="Areas\Admin\Views\User\Add.cshtml" />
+    <None Include="Areas\Admin\Views\User\List.cshtml" />
     <None Include="Areas\Client\Views\Home\Index.cshtml" />
     <None Include="wwwroot\admin\assets\css\app-dark-rtl.min.css.map" />
     <None Include="wwwroot\admin\assets\css\app-dark.min.css.map" />

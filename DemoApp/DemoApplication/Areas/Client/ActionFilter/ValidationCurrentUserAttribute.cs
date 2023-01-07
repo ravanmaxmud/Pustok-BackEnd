@@ -1,5 +1,4 @@
 ﻿using DemoApplication.Areas.Client.Controllers;
-using DemoApplication.Controllers;
 using DemoApplication.Database;
 using DemoApplication.Services.Abstracts;
 using Microsoft.AspNetCore.Mvc.Filters;

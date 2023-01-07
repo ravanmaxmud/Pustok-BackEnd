@@ -9,11 +9,13 @@ using Nancy.Json;
 using DemoApplication.Areas.Admin.ViewCompanents;
 using DemoApplication.Areas.Admin.ViewModels.Book.Add;
 using Nancy;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DemoApplication.Areas.Admin.Controllers
 {
     [Area("admin")]
     [Route("admin/author")]
+    [Authorize(Roles = "admin")]
     public class AuthorController : Controller
     {
         private readonly DataContext _dataContext;

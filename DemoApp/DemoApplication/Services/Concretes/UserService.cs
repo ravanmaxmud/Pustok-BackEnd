@@ -65,7 +65,7 @@ namespace DemoApplication.Services.Concretes
 
         public async Task<bool> CheckPasswordAsync(string? email, string? password)
         {
-            var model = await _dataContext.Users.FirstAsync(u => u.Email == email);
+            var model = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (model is null || !BCrypt.Net.BCrypt.Verify(password, model.Password))
             {
                 return false;
@@ -75,26 +75,41 @@ namespace DemoApplication.Services.Concretes
 
 
 
-        public async Task SignInAsync(int id)
+        public async Task SignInAsync(int id,string? role = null)
         {
             var claims = new List<Claim>
             {
                 new Claim(CustomClaimNames.ID, id.ToString())
             };
+            if (role is not null)
+            {
+                claims.Add(new Claim(ClaimTypes.Role,role));
+            }
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var userPrincipal = new ClaimsPrincipal(identity);
 
             await _httpContextAccessor.HttpContext!.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
         }
 
-        public async Task SignInAsync(string? email, string? password)
+        public async Task SignInAsync(string? email, string? password,string? role = null)
         {
+            //var user = await _dataContext.Users.FirstAsync(u => u.Email == email && u.Password == password);
+            //await SignInAsync(user.Id, role);
+            //var user = await _dataContext.Users.FirstAsync(u => u.Email == email);
+            //bool verified = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            //if (verified == true)
+            //{
+            //    await SignInAsync(user.Id,role);
+            //}
+
             var user = await _dataContext.Users.FirstAsync(u => u.Email == email);
-            bool verified = BCrypt.Net.BCrypt.Verify(password, user.Password);
-            if (verified == true)
+
+            if (user is not null || BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                await SignInAsync(user.Id);
+               await SignInAsync(user.Id,role);    
             }
+          
+
         }
 
 
@@ -105,15 +120,14 @@ namespace DemoApplication.Services.Concretes
 
         public async Task CreateAsync(RegisterViewModel model)
         {
-            //var hashedPassword = PasswordHasher.MD5Create(model.Password);
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+     
 
             var user = new User
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
-                Password = passwordHash,
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
             };

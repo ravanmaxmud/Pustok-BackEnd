@@ -13,5 +13,8 @@ namespace DemoApplication.Database.Models
         public DateTime UpdatedAt { get; set; }
         public Basket? Basket { get; set; }
         public Addres? Address { get; set; }
+
+        public int? RoleId { get; set; }
+        public Role? Roles { get; set; }
     }
 }

@@ -130,5 +130,20 @@ namespace DemoApplication.Areas.Admin.Controllers
             }
         }
 
+        [HttpPost("delete/{id}", Name = "admin-slider-delete")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var slider = await _dataContext.Sliders.FirstOrDefaultAsync(b => b.Id == id);
+            if (slider is null)
+            {
+                return NotFound();
+            }
+            await _fileService.DeleteAsync(slider.BackgroundİmageInFileSystem, UploadDirectory.Slider);
+            _dataContext.Sliders.Remove(slider);
+            await _dataContext.SaveChangesAsync();
+
+            return RedirectToRoute("admin-slider-list");
+        }
+
     }
 }

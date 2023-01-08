@@ -39,9 +39,13 @@
                                 <td>@slider.Button</td>
                                 <td>@slider.ButtonRedirectUrl</td>
                                 <td>@slider.CreatedAt.ToString("dd/MM/yyyy")</td>
-                                <td class="text-end">
+                                <td class="text-end d-flex mt-3">
                                     <a asp-route="admin-slider-update" asp-route-id="@slider.Id"><i class="las la-pen text-secondary font-16"></i></a>
-                                    <a asp-route="admin-slider-delete" asp-route-id="@slider.Id"> <i class="las la-trash-alt text-secondary font-16"></i></a>
+                                
+                                    <form method="POST" asp-route="admin-slider-delete" asp-route-id="@slider.Id" id="slider-form-@slider.Id"></form>
+                                    <button class="border-0" type="submit" form="slider-form-@slider.Id">
+                                        <i class="las la-trash-alt text-secondary font-16"></i>
+                                    </button>
                                 </td>
                             </tr>
                         }

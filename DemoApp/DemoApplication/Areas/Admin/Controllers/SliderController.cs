@@ -77,6 +77,58 @@ namespace DemoApplication.Areas.Admin.Controllers
                 _dataContext.SaveChanges();
             }
         }
+        [HttpGet("update/{id}", Name = "admin-slider-update")]
+        public async Task<IActionResult> Update([FromRoute] int id)
+        {
+            var slider = await _dataContext.Sliders.FirstOrDefaultAsync(s=> s.Id == id);
+            if (slider == null)
+            {
+                return NotFound();
+            }
+            var model = new AddViewModel
+            {
+                Id = slider.Id,
+                MainTitle = slider.MainTitle,
+                Content=slider.Content,
+                Button = slider.Button,
+                ButtonRedirectUrl=slider.ButtonRedirectUrl,
+                Order=slider.Order,
+                BackgroundİmageUrl = _fileService.GetFileUrl(slider.BackgroundİmageInFileSystem,UploadDirectory.Slider)
+
+            };
+            return View(model);
+        }
+        [HttpPost("update/{id}", Name = "admin-slider-update")]
+        public async Task<IActionResult> Update(AddViewModel model)
+        {
+           var slide = await _dataContext.Sliders.FirstOrDefaultAsync(s=> s.Id == model.Id);
+            
+            if (slide == null)return NotFound();
+
+            if(!ModelState.IsValid) return View(model);
+
+            
+            await _fileService.DeleteAsync(slide.BackgroundİmageInFileSystem, UploadDirectory.Slider);
+            var backGroundImageInFileSytem = await _fileService.UploadAsync(model.Backgroundİmage,UploadDirectory.Slider);
+
+            await UpdateSlider(model.Backgroundİmage.FileName, backGroundImageInFileSytem);
+
+            return RedirectToRoute("admin-slider-list");
+
+            async Task UpdateSlider(string backGroundImageName, string backGroundImageInFileSytem) 
+            {
+                slide.MainTitle = model.MainTitle;
+                slide.Content = model.Content;
+                slide.Backgroundİmage = backGroundImageName;
+                slide.BackgroundİmageInFileSystem = backGroundImageInFileSytem;
+                slide.Button = model.Button;
+                slide.ButtonRedirectUrl = model.ButtonRedirectUrl;
+                slide.Order = model.Order;
+
+
+                await _dataContext.SaveChangesAsync();
+            }
+        }
 
     }
 }

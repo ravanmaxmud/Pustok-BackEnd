@@ -10,7 +10,7 @@ namespace DemoApplication.Areas.Admin.ViewModels.Slider
         [Required]
         public string Content { get; set; }
         [Required]
-        public IFormFile? Backgroundİmage { get; set; }
+        public IFormFile Backgroundİmage { get; set; }
         public string? BackgroundİmageUrl { get; set; }
         [Required]
         public string Button { get; set; }

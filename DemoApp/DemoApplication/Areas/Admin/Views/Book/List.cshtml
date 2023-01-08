@@ -17,6 +17,7 @@
                 <table class="table table-striped mb-0">
                     <thead>
                         <tr>
+                            <th>Image</th>
                             <th>Title</th>
                             <th>Price</th>
                             <th>Author</th>
@@ -28,6 +29,9 @@
                         @foreach (var book in Model)
                         {
                             <tr>
+                                <td>
+                                    <img width="20%" src="~/@book.ImageUrl"/>
+                                </td>
                                 <td>@book.Title</td>
                                 <td>@book.Price</td>
                                 <td>@book.Author</td>

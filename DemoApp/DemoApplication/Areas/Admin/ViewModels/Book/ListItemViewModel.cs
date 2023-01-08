@@ -6,11 +6,12 @@
         public string Title { get; set; }
         public decimal Price { get; set; }
         public string Author { get; set; }
+        public string ImageUrl { get; set; }
         public List<CategoryViewModeL> Categories { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        public ListItemViewModel(int id, string title, decimal price, string author, DateTime createdAt, List<CategoryViewModeL> categories)
+        public ListItemViewModel(int id, string title, decimal price, string author, DateTime createdAt, List<CategoryViewModeL> categories, string imageUrl)
         {
             Id = id;
             Title = title;
@@ -18,6 +19,7 @@
             Author = author;
             CreatedAt = createdAt;
             Categories = categories;
+            ImageUrl = imageUrl;
         }
 
         public class CategoryViewModeL

@@ -2,6 +2,7 @@
 using DemoApplication.Areas.Client.ViewModels.Home.Index;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
+using DemoApplication.Services.Abstracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,12 +21,24 @@ namespace DemoApplication.Areas.Client.Controllers
 
         [HttpGet("~/", Name = "client-home-index")]
         [HttpGet("index")]
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> IndexAsync([FromServices] IFileService fileService)
         {
             var model = new IndexViewModel
             {
                 Books = await _dbContext.Books
-                .Select(b => new BookListItemViewModel(b.Id, b.Title, $"{b.Author.FirstName} {b.Author.LastName}", b.Price))
+                .Select(b => new BookListItemViewModel
+                (b.Id,
+                b.Title,
+                $"{b.Author.FirstName} {b.Author.LastName}",
+                b.Price,
+                fileService.GetFileUrl(b.ImageNameFileSystem,Contracts.File.UploadDirectory.Book)))
+                .ToListAsync(),
+
+                Sliders = await _dbContext.Sliders.OrderBy(s=> s.Order).Select(s => new SliderListItemViewModel(s.Id,s.MainTitle,s.Content,
+                s.Button,
+                s.ButtonRedirectUrl,
+                fileService.GetFileUrl(s.BackgroundİmageInFileSystem,Contracts.File.UploadDirectory.Slider),
+                s.Order))
                 .ToListAsync(),
             };
 

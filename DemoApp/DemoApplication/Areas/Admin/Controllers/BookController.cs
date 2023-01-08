@@ -44,7 +44,8 @@ namespace DemoApplication.Areas.Admin.Controllers
                         b.CreatedAt,
                         b.BookCategories
                             .Select(bc => bc.Category)
-                                .Select(c => new ListItemViewModel.CategoryViewModeL(c.Title, c.Parent.Title)).ToList()))
+                                .Select(c => new ListItemViewModel.CategoryViewModeL(c.Title, c.Parent.Title)).ToList(),
+                        _fileService.GetFileUrl(b.ImageNameFileSystem,UploadDirectory.Book)))
                 .ToListAsync();
 
             return View(model);
@@ -95,11 +96,11 @@ namespace DemoApplication.Areas.Admin.Controllers
 
             }
 
-            var imageNameInSystem = await _fileService.UploadAsync(model.Image,UploadDirectory.Book);
+            var imageNameInSystem = await _fileService.UploadAsync(model!.Image,UploadDirectory.Book);
 
 
 
-            AddBook(model.Image.FileName,imageNameInSystem);
+            AddBook(model.Image!.FileName,imageNameInSystem);
 
             return RedirectToRoute("admin-book-list");
 
@@ -174,7 +175,8 @@ namespace DemoApplication.Areas.Admin.Controllers
                 Categories = _dataContext.Categories
                     .Select(c => new CategoryListItemViewModel(c.Id, c.Title))
                     .ToList(),
-                CategoryIds = book.BookCategories.Select(bc => bc.CategoryId).ToList()
+                CategoryIds = book.BookCategories.Select(bc => bc.CategoryId).ToList(),
+                ImageUrl = _fileService.GetFileUrl(book.ImageNameFileSystem,UploadDirectory.Book)
             };
 
             return View(model);
@@ -210,10 +212,10 @@ namespace DemoApplication.Areas.Admin.Controllers
                 }
 
             }
+            await _fileService.DeleteAsync(book.ImageNameFileSystem, UploadDirectory.Book);
+            var imageFileNameInSystem = await _fileService.UploadAsync(model.Image, UploadDirectory.Book);
 
-
-            await UpdateBookAsync();
-
+            await UpdateBookAsync(model.Image.FileName, imageFileNameInSystem);
             return RedirectToRoute("admin-book-list");
 
 
@@ -234,12 +236,14 @@ namespace DemoApplication.Areas.Admin.Controllers
                 return View(model);
             }
 
-            async Task UpdateBookAsync()
+            async Task UpdateBookAsync(string imageName, string imageNameInFileSystem)
             {
                 book.Title = model.Title;
                 book.AuthorId = model.AuthorId;
                 book.Price = model.Price;
                 book.UpdatedAt = DateTime.Now;
+                book.ImageName = imageName;
+                book.ImageNameFileSystem = imageFileNameInSystem;
 
                 var categoriesInDb = book.BookCategories.Select(bc => bc.CategoryId).ToList();
                 var categoriesToRemove = categoriesInDb.Except(model.CategoryIds).ToList();
@@ -274,7 +278,7 @@ namespace DemoApplication.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            await _fileService.DeleteAsync(book.ImageNameFileSystem, UploadDirectory.Book);
             _dataContext.Books.Remove(book);
             await _dataContext.SaveChangesAsync();
 

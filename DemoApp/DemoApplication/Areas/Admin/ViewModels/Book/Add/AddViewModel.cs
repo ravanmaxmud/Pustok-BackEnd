@@ -11,13 +11,14 @@ namespace DemoApplication.Areas.Admin.ViewModels.Book.Add
         public decimal Price { get; set; }
 
         [Required]
-        public List<int> CategoryIds { get; set; }
+        public List<int>? CategoryIds { get; set; }
 
         [Required]
         public int AuthorId { get; set; }
 
         [Required]
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
+        public string? ImageUrl { get; set; }
 
 
         public List<AuthorListItemViewModel>? Authors { get; set; }

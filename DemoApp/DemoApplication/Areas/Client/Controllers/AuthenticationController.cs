@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using XAct.Users;
 using Microsoft.EntityFrameworkCore;
 using DemoApplication.Contracts.Identity;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using DemoApplication.Contracts.Email;
 
 namespace DemoApplication.Areas.Client.Controllers
 {
@@ -17,10 +19,12 @@ namespace DemoApplication.Areas.Client.Controllers
     {
         private readonly DataContext _dbContext;
         private readonly IUserService _userService;
-        public AuthenticationController(DataContext dataContext , IUserService userService)
+        private readonly IEmailService _emailService;
+        public AuthenticationController(DataContext dataContext , IUserService userService,IEmailService emailService)
         {
             _dbContext = dataContext;
             _userService = userService;
+            _emailService = emailService;
         }
 
    
@@ -78,11 +82,40 @@ namespace DemoApplication.Areas.Client.Controllers
             {
                 return View(model);
             }
+            var emails = new List<string>();
+
+            emails.Add(model.Email);
+
 
             await _userService.CreateAsync(model);
+            var message = new MessageDto(emails, "Activate Email",$"https://localhost:7026/authentication/email?email={model.Email}");
+
+             _emailService.Send(message);
+
 
             return RedirectToRoute("client-home-index");
         }
 
+        [HttpGet("email",Name ="client-auth-email")]
+        public async Task<IActionResult> Email(string email) 
+        {
+            var userEmail = await _dbContext.Users.FirstOrDefaultAsync(e=> e.Email == email);
+
+            if (userEmail is null)
+            {
+                return NotFound();
+            }
+
+            var time = DateTime.Now.Minute - userEmail.CreatedAt.Minute;
+
+            if (time <= 15)
+            {
+                userEmail.IsActive = true;
+            }
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToRoute("client-home-index");
+
+        }
     }
 }

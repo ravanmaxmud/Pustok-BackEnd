@@ -14,6 +14,7 @@ using System.Text.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoApplication.Services.Concretes
 {
@@ -104,12 +105,10 @@ namespace DemoApplication.Services.Concretes
 
             var user = await _dataContext.Users.FirstAsync(u => u.Email == email);
 
-            if (user is not null || BCrypt.Net.BCrypt.Verify(password, user.Password))
+            if (user is not null && BCrypt.Net.BCrypt.Verify(password, user.Password) && user.IsActive == true)
             {
-               await SignInAsync(user.Id,role);    
+                await SignInAsync(user.Id, role);
             }
-          
-
         }
 
 
@@ -130,6 +129,7 @@ namespace DemoApplication.Services.Concretes
                 Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
+                IsActive = false
             };
             await _dataContext.Users.AddAsync(user);
 

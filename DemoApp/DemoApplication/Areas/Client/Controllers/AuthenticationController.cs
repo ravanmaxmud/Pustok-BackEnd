@@ -88,34 +88,34 @@ namespace DemoApplication.Areas.Client.Controllers
 
 
             await _userService.CreateAsync(model);
-            var message = new MessageDto(emails, "Activate Email",$"https://localhost:7026/authentication/email?email={model.Email}");
-
-             _emailService.Send(message);
-
-
+           
             return RedirectToRoute("client-home-index");
         }
 
-        [HttpGet("email",Name ="client-auth-email")]
-        public async Task<IActionResult> Email(string email) 
+        [HttpGet("activate/{token}", Name = "client-auth-activate")]
+        public async Task<IActionResult> ActivateAsync([FromRoute] string token)
         {
-            var userEmail = await _dbContext.Users.FirstOrDefaultAsync(e=> e.Email == email);
+            var userActivation = await _dbContext.UserActivations
+                .Include(ua => ua.User)
+                .FirstOrDefaultAsync(ua =>
+                    !ua!.User!.IsActive &&
+                    ua.ActivationToken == token);
 
-            if (userEmail is null)
+            if (userActivation is null)
             {
                 return NotFound();
             }
 
-            var time = DateTime.Now.Minute - userEmail.CreatedAt.Minute;
-
-            if (time <= 15)
+            if (DateTime.Now > userActivation!.ExpiredDate)
             {
-                userEmail.IsActive = true;
+                return Ok("Token expired olub teessufler");
             }
+
+            userActivation!.User!.IsActive = true;
+
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToRoute("client-home-index");
-
+            return RedirectToRoute("client-auth-login");
         }
     }
 }

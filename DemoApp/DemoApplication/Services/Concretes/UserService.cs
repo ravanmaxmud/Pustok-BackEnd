@@ -15,6 +15,8 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.WebRequestMethods;
+using DemoApplication.Contracts.Email;
 
 namespace DemoApplication.Services.Concretes
 {
@@ -22,14 +24,17 @@ namespace DemoApplication.Services.Concretes
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IEmailService _emailService;
         private User _currentUser;
 
         public UserService(
             DataContext dataContext,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IEmailService emailService)
         {
             _dataContext = dataContext;
             _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
         }
 
         public User CurrentUser
@@ -129,7 +134,6 @@ namespace DemoApplication.Services.Concretes
                 Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                IsActive = false
             };
             await _dataContext.Users.AddAsync(user);
 
@@ -164,7 +168,44 @@ namespace DemoApplication.Services.Concretes
                 }
             }
 
+            await SendActivationUrl(user);
+
             await _dataContext.SaveChangesAsync();
+
+
+
+            async Task SendActivationUrl(User user) 
+            {
+
+                string token = GenerateActivationToken();
+                string activationUrl = GenerateActivationUrl(token);
+                DateTime expireDate = DateTime.Now.AddMinutes(1);
+
+                var userActivation = new UserActivation
+                {
+                    User = user,
+                    ActivationUrl = activationUrl,
+                    ActivationToken = token,
+                    ExpiredDate = expireDate,
+                };
+
+                await _dataContext.UserActivations.AddAsync(userActivation);
+
+                var body = EmailMessages.Body.ACTIVATION_MESSAGE.Replace(EmailMessageKeyword.ACTIVATION_URL, activationUrl);
+
+                var subject = EmailMessages.Subject.ACTIVATION_MESSAGE;
+
+                _emailService.Send(new MessageDto(user.Email,subject,body));
+            }
+        }
+        private string GenerateActivationToken()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        private string GenerateActivationUrl(string token) 
+        {
+            return $"https://localhost:7026/authentication/activate/{token}";
         }
     }
 }

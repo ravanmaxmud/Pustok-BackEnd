@@ -27,6 +27,7 @@ namespace DemoApplication.Database
         public DbSet<Addres> Address { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Slider> Sliders { get; set; }
+        public DbSet<UserActivation> UserActivations { get; set; }
 
 
 

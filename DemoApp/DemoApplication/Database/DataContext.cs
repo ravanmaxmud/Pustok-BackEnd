@@ -15,6 +15,7 @@ namespace DemoApplication.Database
         }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<BookImage> BookImages { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Category> Categories { get; set; }

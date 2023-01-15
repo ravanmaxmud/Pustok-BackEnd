@@ -1,0 +1,65 @@
+﻿@using DemoApplication.Areas.Client.ViewModels.Basket;
+@model List<ProductCookieViewModel>
+
+
+
+<div class="cart_area cart-area-padding  ">
+    <div class="container">
+        <div class="page-section-title">
+            <h1>Shopping Cart</h1>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form action="#" class="">
+                    <!-- Cart Table -->
+                    <div class="cart-table  table-responsive mb--40">
+                        <table class="table">
+                            <!-- Head Row -->
+                            <thead>
+                                <tr>
+                                    <th class="pro-remove"></th>
+                                    <th class="pro-thumbnail">Image</th>
+                                    <th class="pro-title">Product</th>
+                                    <th class="pro-price">Price</th>
+                                    <th class="pro-quantity">Quantity</th>
+                                    <th class="pro-subtotal">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="">
+                                <!-- Product Row -->
+
+                                @foreach (var basketProduct in Model)
+                                {
+                                    <tr class="shop-cart-basket">
+                                        <td class="pro-remove">
+                                            <a asp-route="client-shop-basket-delete" asp-route-id="@basketProduct.Id" data-id="@basketProduct.Id" class="cross-btn remove-shop-basket">X</a>
+                                        </td>
+                                        <td class="pro-thumbnail">
+                                            <a href="#">
+                                                <img src="~/@basketProduct.ImageUrl" alt="Product">
+                                            </a>
+                                        </td>
+                                        <td class="pro-title"><a href="#">@basketProduct.Title</a></td>
+                                        <td class="pro-price"><span>@basketProduct.Price</span></td>
+                                        <td class="pro-quantity">
+                                            <div class="pro-qty">
+                                                <div class="count-input-block">
+                                                    <input type="number" class="form-control text-center"
+                                                       value="@basketProduct.Quantity">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="pro-subtotal"><span>@basketProduct.Total</span></td>
+                                    </tr>
+                                }
+                                
+                                <!-- Product Row -->
+                              
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,9 @@
 ﻿using DemoApplication.Areas.Client.ViewCompanents;
 using DemoApplication.Areas.Client.ViewModels.Basket;
+using DemoApplication.Areas.Client.ViewModels.Home.Index;
+using DemoApplication.Contracts.File;
 using DemoApplication.Database;
+using DemoApplication.Services.Abstracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -20,24 +23,30 @@ namespace DemoApplication.Areas.Client.Controllers
         }
 
         [HttpGet("basket/{id}", Name = "client-basket-add")]
-        public async Task<IActionResult> AddProductAsync([FromRoute] int id)
+        public async Task<IActionResult> AddProductAsync([FromRoute] int id, [FromServices] IFileService fileService)
         {
-            var products = await _dataContext.Books.FirstOrDefaultAsync(p => p.Id == id);
+            var products = await _dataContext.Books.Include(b=>b.BookImages).FirstOrDefaultAsync(p => p.Id == id);
             if (products is null)
             {
                 return NotFound();
             }
-        
+            
             var productsCookieValue = HttpContext.Request.Cookies["products"];
 
             var productViewModel = new List<ProductCookieViewModel>();
 
 
+
+
             if (productsCookieValue is null)
             {
-                 productViewModel = new List<ProductCookieViewModel>()
+                productViewModel = new List<ProductCookieViewModel>()
                 {
-                   new ProductCookieViewModel(products.Id,products.Title,String.Empty,1,products.Price,products.Price)
+                   new ProductCookieViewModel(products.Id,products.Title,
+                   products.BookImages!.Take(1).FirstOrDefault()! != null
+                ? fileService.GetFileUrl(products.BookImages.Take(1).FirstOrDefault().ImageNameFileSystem,UploadDirectory.Book)
+                : String.Empty
+                   ,1,products.Price,products.Price)
                 };
 
                 HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(productViewModel));
@@ -51,7 +60,11 @@ namespace DemoApplication.Areas.Client.Controllers
 
                 if (cookieViewModel is null)
                 {
-                    productViewModel!.Add(new ProductCookieViewModel(products.Id, products.Title, String.Empty, 1, products.Price, products.Price));
+                    productViewModel!.Add(new ProductCookieViewModel(products.Id, products.Title,
+                           products.BookImages!.Take(1).FirstOrDefault()! != null
+                ? fileService.GetFileUrl(products.BookImages.Take(1).FirstOrDefault().ImageNameFileSystem, UploadDirectory.Book)
+                : String.Empty
+                        , 1, products.Price, products.Price));
                 }
                 else
                 {
@@ -99,6 +112,9 @@ namespace DemoApplication.Areas.Client.Controllers
 
             return ViewComponent(nameof(ShopCart), producktCookieViewModel);
         }
+
+       
+
 
     }
 }

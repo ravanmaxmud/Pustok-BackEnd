@@ -11,7 +11,7 @@
 
         public DateTime CreatedAt { get; set; }
 
-        public ListItemViewModel(int id, string title, decimal price, string author, DateTime createdAt, List<CategoryViewModeL> categories, string imageUrl)
+        public ListItemViewModel(int id, string title, decimal price, string author, DateTime createdAt, List<CategoryViewModeL> categories)
         {
             Id = id;
             Title = title;
@@ -19,7 +19,6 @@
             Author = author;
             CreatedAt = createdAt;
             Categories = categories;
-            ImageUrl = imageUrl;
         }
 
         public class CategoryViewModeL

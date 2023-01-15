@@ -16,7 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Use Minified Plugins Version For Fast Page Load -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" asp-append-version="true" type="text/css" media="screen" href="~/client/assets/css/plugins.css" />
+    <link rel="stylesheet" asp-append-version="true" type="text/css" medxia="screen" href="~/client/assets/css/plugins.css" />
     <link rel="stylesheet" asp-append-version="true" type="text/css" media="screen" href="~/client/assets/css/main.css" />
     <link rel="shortcut icon" asp-append-version="true" type="image/x-icon" href="~/client/assets/image/favicon.ico">
 
@@ -118,32 +118,11 @@
 
         @RenderBody();
 
-        <!-- Modal -->
-        <div class="modal fade modal-quick-view" id="quickModal" tabindex="-1" role="dialog"
-             aria-labelledby="quickModal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <button type="button" class="close modal-close-btn ml-auto" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <div class="product-details-modal">  
-                        
-                    </div>
-                    <div class="modal-footer">
-                        <div class="widget-social-share">
-                            <span class="widget-label">Share:</span>
-                            <div class="modal-social-share">
-                                <a href="#" class="single-icon"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="single-icon"><i class="fab fa-twitter"></i></a>
-                                <a href="#" class="single-icon"><i class="fab fa-youtube"></i></a>
-                                <a href="#" class="single-icon"><i class="fab fa-google-plus-g"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        <partial name="Partials/_FooterPartial" />
     </div>
+
+
     <div id="toasterAccept" class="bg-success d-inline">
         <span class="text-light">Email Succesifully Aded</span>
     </div>

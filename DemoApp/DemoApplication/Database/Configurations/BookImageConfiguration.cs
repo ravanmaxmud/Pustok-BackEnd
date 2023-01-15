@@ -5,15 +5,12 @@ using System.Reflection.Emit;
 
 namespace DemoApplication.Database.Configurations
 {
- 
-    public class BookConfigurations : IEntityTypeConfiguration<Book>
+    public class BookImageConfiguration : IEntityTypeConfiguration<BookImage>
     {
-        public void Configure(EntityTypeBuilder<Book> builder)
+        public void Configure(EntityTypeBuilder<BookImage> builder)
         {
             builder
-               .HasOne(b => b.Author)
-               .WithMany(a => a.Books)
-               .HasForeignKey(b => b.AuthorId);
+               .ToTable("BookImages");
         }
     }
 }

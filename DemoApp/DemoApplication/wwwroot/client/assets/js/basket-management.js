@@ -45,6 +45,15 @@ $(document).on("click", ".remove-product-to-basket-btn", function (e)
             $('.cart-block').html(data);
         })
 })
+$(document).on("click", ".remove-shop-basket", function (e) {
+    e.preventDefault();
+
+    fetch(e.target.href)
+        .then(response => response.text())
+        .then(data => {
+            $('.cart-table').html(data);
+        })
+})
 
 $(document).on("click", ".show-book-modal", function (e) {
     e.preventDefault();

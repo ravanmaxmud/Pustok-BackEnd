@@ -1,5 +1,6 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Home.Contact;
 using DemoApplication.Areas.Client.ViewModels.Home.Index;
+using DemoApplication.Contracts.File;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
 using DemoApplication.Services.Abstracts;
@@ -31,7 +32,12 @@ namespace DemoApplication.Areas.Client.Controllers
                 b.Title,
                 $"{b.Author.FirstName} {b.Author.LastName}",
                 b.Price,
-                fileService.GetFileUrl(b.ImageNameFileSystem,Contracts.File.UploadDirectory.Book)))
+                b.BookImages!.Take(1).FirstOrDefault()! != null
+                ? fileService.GetFileUrl(b.BookImages.Take(1).FirstOrDefault().ImageNameFileSystem,UploadDirectory.Book)
+                : String.Empty,
+                b.BookImages!.Skip(1).Take(1).FirstOrDefault()! != null
+                ? fileService.GetFileUrl(b.BookImages.Skip(1).Take(1).FirstOrDefault().ImageNameFileSystem,UploadDirectory.Book)
+                : String.Empty))
                 .ToListAsync(),
 
                 Sliders = await _dbContext.Sliders.OrderBy(s=> s.Order).Select(s => new SliderListItemViewModel(s.Id,s.MainTitle,s.Content,

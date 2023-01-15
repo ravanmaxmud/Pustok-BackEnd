@@ -1,0 +1,18 @@
+﻿@using DemoApplication.Areas.Client.ViewModels.Basket;
+@model List<ProductCookieViewModel>
+
+
+<div class="col-lg-6 col-12 d-flex">
+    <div class="cart-summary">
+        <div class="cart-summary-wrap">
+            <h4><span>Cart Summary</span></h4>
+            <p>Sub Total <span class="text-primary">$@Model!.Sum(pcvm => pcvm.Total)</span></p>
+            <p>Shipping Cost <span class="text-primary">$00.00</span></p>
+            <h2>Grand Total <span class="text-primary">$@Model!.Sum(pcvm => pcvm.Total)</span></h2>
+        </div>
+        <div class="cart-summary-button">
+            <a href="checkout.html" class="checkout-btn c-btn btn--primary">Checkout</a>
+            <button class="update-btn c-btn btn-outlined">Update Cart</button>
+        </div>
+    </div>
+</div>

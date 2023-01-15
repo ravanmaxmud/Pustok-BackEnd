@@ -13,8 +13,7 @@ namespace DemoApplication.Database.Models
         public int AuthorId { get; set; }
         public Author Author { get; set; }
 
-        public string? ImageName { get; set; }
-        public string? ImageNameFileSystem { get; set; }
+        public List<BookImage>? BookImages { get; set; }
 
         public List<BookCategory>? BookCategories { get; set; }
         public List<BasketProduct>? BasketProducts { get; set; }

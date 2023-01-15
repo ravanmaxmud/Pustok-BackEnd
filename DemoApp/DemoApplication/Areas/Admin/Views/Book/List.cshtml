@@ -17,7 +17,7 @@
                 <table class="table table-striped mb-0">
                     <thead>
                         <tr>
-                            <th>Image</th>
+                            @*<th>Image</th>*@
                             <th>Title</th>
                             <th>Price</th>
                             <th>Author</th>
@@ -29,20 +29,22 @@
                         @foreach (var book in Model)
                         {
                             <tr>
-                                <td>
+                                @*<td>
                                     <img width="20%" src="~/@book.ImageUrl"/>
-                                </td>
+                                </td>*@
                                 <td>@book.Title</td>
                                 <td>@book.Price</td>
                                 <td>@book.Author</td>
                                 <td>@string.Join(", ", book.Categories.Select(c => $"{c.Title}->{c.ParentTitle}"))</td>
                                 <td>@book.CreatedAt.ToString("dd/MM/yyyy")</td>
                                 <td class="text-end">
+                                   
                                     <a asp-route="admin-book-update" asp-route-id="@book.Id" ><i class="las la-pen text-secondary font-16"></i></a>
                                     <form method="POST" asp-route="admin-book-delete" asp-route-id="@book.Id" id="book-form-@book.Id" ></form>
                                     <button type="submit" form="book-form-@book.Id">
                                         <i class="las la-trash-alt text-secondary font-16"></i>
                                     </button>
+                                    <a class="btn btn-danger" asp-route="admin-book-image-list" asp-route-bookId="@book.Id">BookImageList</a>
                                 </td>
                             </tr>
                         }

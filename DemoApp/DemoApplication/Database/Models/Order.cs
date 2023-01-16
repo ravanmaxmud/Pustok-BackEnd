@@ -2,9 +2,9 @@
 
 namespace DemoApplication.Database.Models
 {
-    public class Order : BaseEntity, IAuditable
+    public class Order : IAuditable
     {
-        public string OrderCode { get; set; }
+        public string Id { get; set; }
         public string Status { get; set; }
         public decimal SumTotalPrice { get; set; }
         public DateTime CreatedAt { get; set ; }

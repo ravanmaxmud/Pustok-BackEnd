@@ -9,7 +9,7 @@ namespace DemoApplication.Database.Models
         public DateTime UpdatedAt { get; set; }
 
 
-        public int OrderId { get; set; }
+        public string OrderId { get; set; }
         public Order Order { get; set; }
 
         public int BookId { get; set; }

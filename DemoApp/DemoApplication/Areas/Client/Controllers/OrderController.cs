@@ -53,47 +53,55 @@ namespace DemoApplication.Areas.Client.Controllers
             return View(model);
         }
 
-        [HttpPost("placeorder/{userId}", Name = "client-order-placeorder")]
-        public async Task<IActionResult> PlaceOrder([FromRoute] int userId)
+        [HttpPost("placeorder", Name = "client-order-placeorder")]
+        public async Task<IActionResult> PlaceOrder()
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(b => b.Id == userId);
+            var pasketProducts = _dbContext.BasketProducts.Include(bp => bp.Book).Select(bp => new
+                OrderViewModel.ListItemViewModel(bp.BookId, bp.Book.Title, bp.Quantity, bp.Book.Price, bp.Book.Price * bp.Quantity)).ToList();
 
-            var model = new OrderViewModel
+            var createOrder = await CreateOrder();
+
+            foreach (var basketProduct in pasketProducts)
             {
-                SumTotal = _dbContext.BasketProducts.Where(bp => bp.Basket.UserId == _userService.CurrentUser.Id)
-                .Sum(bp => bp.Book.Price * bp.Quantity),
-                ProductList = await _dbContext.BasketProducts.Where(bp => bp.Basket.UserId == _userService.CurrentUser.Id)
-                .Select(bp => new OrderViewModel.ListItemViewModel(
-                    bp.Id,
-                    bp.Book.Title,
-                    bp.Quantity,
-                    bp.Book.Price,
-                    bp.Book.Price * bp.Quantity)).ToListAsync()
-            };
+                var orderProduct = new OrderProduct
+                {
+                    BookId = basketProduct.Id,
+                    Quantity = basketProduct.Quantity,
+                    OrderId = createOrder.Id
 
+                };
 
+                _dbContext.OrderProducts.Add(orderProduct);
+            }
+            await DeleteBasketProducts();
+            _dbContext.SaveChanges();
 
+            async Task<Order> CreateOrder()
+            {
+                var order = new Order
+                {
+                    Id = _orderService.OrderCode,
+                    UserId = _userService.CurrentUser.Id,
+                    Status = Status.Created,
+                    SumTotalPrice = _dbContext.BasketProducts.
+                    Where(bp => bp.Basket.UserId == _userService.CurrentUser.Id).Sum(bp => bp.Book.Price * bp.Quantity)
 
+                };
 
-            var order = await _orderService.AddOrderAsync(model, model.SumTotal);
+                await _dbContext.Orders.AddAsync(order);
 
+                return order;
 
+            }
+            async Task DeleteBasketProducts()
+            {
+                var removedBasketProducts = await _dbContext.BasketProducts
+                       .Where(bp => bp.Basket.UserId == _userService.CurrentUser.Id).ToListAsync();
 
-            await _orderService.AddOrderProductAsync(model);
+                removedBasketProducts.ForEach(bp => _dbContext.BasketProducts.Remove(bp));
 
-            var pasketProducts = await _dbContext.BasketProducts
-                        .Where(bp => bp.Basket.UserId == _userService.CurrentUser.Id)
-                       .ToListAsync();
-
-            _dbContext.BasketProducts.RemoveRange(pasketProducts);
-
-
-            await _dbContext.SaveChangesAsync();
-
+            }
             return RedirectToRoute("client-account-orders");
-
-
-
            
         }
 

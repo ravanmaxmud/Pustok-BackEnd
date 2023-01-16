@@ -4,6 +4,7 @@ using DemoApplication.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DemoApplication.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230115154657_Orders")]
+    partial class Orders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -613,7 +615,7 @@ namespace DemoApplication.Migrations
             modelBuilder.Entity("DemoApplication.Database.Models.Order", b =>
                 {
                     b.HasOne("DemoApplication.Database.Models.User", "User")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -696,8 +698,6 @@ namespace DemoApplication.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Basket");
-
-                    b.Navigation("Orders");
 
                     b.Navigation("UserActivation");
                 });

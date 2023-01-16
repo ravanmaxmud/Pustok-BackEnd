@@ -1,4 +1,5 @@
 ﻿using DemoApplication.Areas.Client.ViewCompanents;
+using DemoApplication.Areas.Client.ViewComponents;
 using DemoApplication.Areas.Client.ViewModels.Basket;
 using DemoApplication.Areas.Client.ViewModels.Home.Index;
 using DemoApplication.Contracts.File;
@@ -16,10 +17,11 @@ namespace DemoApplication.Areas.Client.Controllers
     public class ShopCartBasketController : Controller
     {
         private readonly DataContext _dbContext;
-
-        public ShopCartBasketController(DataContext dbContext)
+        private readonly IUserService _userService;
+        public ShopCartBasketController(DataContext dbContext, IUserService userService)
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
 
 
@@ -52,31 +54,42 @@ namespace DemoApplication.Areas.Client.Controllers
         public async Task<IActionResult> DeleteBaketProductAsync([FromRoute] int id)
         {
 
-            var products = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
-            if (products is null)
+
+            if (_userService.IsAuthenticated)
             {
-                return NotFound();
+
+                var basketProduct = await _dbContext.BasketProducts
+                        .FirstOrDefaultAsync(bp => bp.Basket.UserId == _userService.CurrentUser.Id && bp.BookId == id);
+
+                if (basketProduct is null) return NotFound();
+
+                _dbContext.BasketProducts.Remove(basketProduct);
             }
-            var producktCookieViewModel = new List<ProductCookieViewModel>();
-
-            var productCookieValue = HttpContext.Request.Cookies["products"];
-
-
-            if (productCookieValue is null)
+            else
             {
-                return NotFound();
+
+                var product = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+                if (product is null)
+                {
+                    return NotFound();
+                }
+
+                var productCookieValue = HttpContext.Request.Cookies["products"];
+                if (productCookieValue is null)
+                {
+                    return NotFound();
+                }
+
+                var productsCookieViewModel = JsonSerializer.Deserialize<List<ProductCookieViewModel>>(productCookieValue);
+                productsCookieViewModel!.RemoveAll(pcvm => pcvm.Id == id);
+
+                HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(productsCookieViewModel));
             }
 
-            producktCookieViewModel = JsonSerializer.Deserialize
-                                            <List<ProductCookieViewModel>>(productCookieValue);
 
+            await _dbContext.SaveChangesAsync();
 
-            producktCookieViewModel!.RemoveAll(b => b.Id == id);
-
-
-            HttpContext.Response.Cookies.Append("products", JsonSerializer.Serialize(producktCookieViewModel));
-
-            return ViewComponent(nameof(ShopCartBasket), producktCookieViewModel);
+            return RedirectToRoute("client-shop-cart-index");
         }
     }
 }

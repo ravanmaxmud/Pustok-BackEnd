@@ -29,7 +29,6 @@ namespace DemoApplication.Areas.Client.Controllers
 
    
         [HttpGet("login",Name ="client-auth-login")]
-        [ServiceFilter(typeof(ValidationCurrentUserAttribute))]
         public async Task<IActionResult> Login()
         {
             return View();

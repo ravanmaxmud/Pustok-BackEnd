@@ -7,22 +7,23 @@ namespace DemoApplication.Areas.Client.ActionFilter
 {
     public class ValidationCurrentUserAttribute : IActionFilter
     {
-        private readonly IUserService _userService;
+        //private readonly IUserService _userService;
 
-        public ValidationCurrentUserAttribute(IUserService userService)
-        {
-            _userService = userService;
-        }
+        //public ValidationCurrentUserAttribute(IUserService userService)
+        //{
+        //    _userService = userService;
+        //}
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (_userService.IsAuthenticated)
+            var user = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+            if (!user.IsAuthenticated)
             {
-                var controller = (AuthenticationController)context.Controller;
-                context.Result = controller.RedirectToRoute("client-account-dashboard");
+                var controller = (OrderController)context.Controller;
+                context.Result = controller.RedirectToRoute("client-auth-login");
             }
         }
     }

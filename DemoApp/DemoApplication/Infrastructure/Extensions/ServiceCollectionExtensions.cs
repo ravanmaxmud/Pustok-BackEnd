@@ -30,6 +30,7 @@ namespace DemoApplication.Infrastructure.Extensions
             services.AddScoped<ValidationCurrentUserAttribute>();
 
             services.ConfigureMvc();
+
             services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

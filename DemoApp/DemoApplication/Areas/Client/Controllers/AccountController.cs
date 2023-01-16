@@ -1,4 +1,5 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Account;
+using DemoApplication.Contracts.Order;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
 using DemoApplication.Services.Abstracts;
@@ -32,11 +33,13 @@ namespace DemoApplication.Areas.Client.Controllers
         }
 
         [HttpGet("orders", Name = "client-account-orders")]
-        public IActionResult Orders()
+        public async Task<IActionResult> Orders()
         {
-            var user = _userService.CurrentUser;
-
-            return View();
+            var model = await _dataContext.Orders
+                .Select(b => new OrderViewModel(b.Id, b.CreatedAt,b.Status, b.SumTotalPrice))
+                .ToListAsync();
+                
+            return View(model);
         }
         [HttpGet("download", Name = "client-account-download")]
         public IActionResult Download()

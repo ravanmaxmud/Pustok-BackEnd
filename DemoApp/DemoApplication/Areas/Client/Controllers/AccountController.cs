@@ -1,7 +1,7 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Account;
-using DemoApplication.Contracts.Order;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
+using DemoApplication.Database.Models.Enums;
 using DemoApplication.Services.Abstracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -38,7 +38,7 @@ namespace DemoApplication.Areas.Client.Controllers
             var model = await _dataContext.Orders
                 .Select(b => new OrderViewModel(b.Id, b.CreatedAt,b.Status, b.SumTotalPrice))
                 .ToListAsync();
-                
+
             return View(model);
         }
         [HttpGet("download", Name = "client-account-download")]

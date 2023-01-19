@@ -1,22 +1,22 @@
-﻿@using DemoApplication.Areas.Client.ViewModels.Order
+﻿@using DemoApplication.Areas.Client.ViewModels.OrderProducts
 
-@model OrderViewModel
+@model OrderProductsViewModel
 
 <div class="checkout-cart-total">
     <h2 class="checkout-title">YOUR ORDER</h2>
     <h4>Product <span>Total</span></h4>
     <ul>
-        @foreach (var item in Model.ProductList)
+        @foreach (var item in Model.Products)
         {
             <li>
-                <span class="left">@item.Title X @item.Quantity</span> <span class="right">$@item.Total</span>
+                <span class="left">@item.Name X @item.Quantity</span> <span class="right">$@item.Total</span>
             </li>
         }
 
     </ul>
-    <p>Sub Total <span>$@Model.SumTotal</span></p>
+    <p>Sub Total <span>@Model.Summary.Total</span></p>
     <p>Shipping Fee <span>$00.00</span></p>
-    <h4>Grand Total <span>$@Model.SumTotal</span></h4>
+    <h4>Grand Total <span>@Model.Summary.Total</span></h4>
     <div class="method-notice mt--25">
         <article>
             <h3 class="d-none sr-only">blog-article</h3>
@@ -34,9 +34,7 @@
             conditions
         </label>
     </div>
-    <form method="POST" asp-route="client-order-placeorder"  id="book-form-55"></form>
-    <button type="submit" form="book-form-55" class="col-3 btn btn-danger">
-        Place order
-    </button>
+    <form method="POST" asp-route="client-order-placeorder" id="submit-form"></form>
+    <button class="place-order w-100" form="submit-form">Place order</button>
     @*    <a id="btnPlaceOrder" asp-route="client-shopping-placerorder" class="col-3 btn btn-danger">Place order</a>*@
 </div>

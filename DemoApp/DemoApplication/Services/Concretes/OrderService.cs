@@ -1,6 +1,7 @@
 ﻿using DemoApplication.Database;
 using DemoApplication.Database.Models;
 using DemoApplication.Services.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace DemoApplication.Services.Concretes
@@ -9,49 +10,28 @@ namespace DemoApplication.Services.Concretes
     {
 
         private readonly DataContext _context;
+        private const string ORDER_TRACKING_CODE = "OR";
+        private const int ORDER_TRACKINH_MIN_RANGE = 10_000;
+        private const int ORDER_TRACKINH_MAX_RANGE = 100_000;
 
         public OrderService(DataContext context)
         {
             _context = context;
         }
 
-        static Random _random = new Random();
-        public string OrderCode
+        public async Task<string> GenerateUniqueTrackingCodeAsync()
         {
-            get
+            string token = string.Empty;
+            do
             {
-                bool go = true;
-                string newCode = "OR" + _random.Next(1000, 10000);
+                token = GenerateRandomTrackingCode();
+            } while (await _context.Orders.AnyAsync(O=> O.Id == token));
 
-
-                while (go)
-                {
-                    int lastId = 0;
-
-
-                    foreach (Order order in _context.Orders)
-                    {
-                        if (order.Id == newCode)
-                        {
-                            newCode = "OR" + _random.Next(1000, 10000);
-
-                        }
-                        lastId++;
-                    }
-
-                    if (lastId == _context.Orders.Count())
-                    {
-                        go = false;
-
-                    }
-
-                }
-
-
-                return newCode;
-            }
-
-
+            return token;
+        }
+        private string GenerateRandomTrackingCode() 
+        {
+            return $"{ORDER_TRACKING_CODE}{Random.Shared.Next(ORDER_TRACKINH_MIN_RANGE,ORDER_TRACKINH_MAX_RANGE)}";        
         }
     }
 }

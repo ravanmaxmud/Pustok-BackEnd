@@ -22,7 +22,7 @@ namespace DemoApplication.Areas.Client.ActionFilter
             var user = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
             if (!user.IsAuthenticated)
             {
-                var controller = (OrderController)context.Controller;
+                var controller = (AuthenticationController)context.Controller;
                 context.Result = controller.RedirectToRoute("client-auth-login");
             }
         }

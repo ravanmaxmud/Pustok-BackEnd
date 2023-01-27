@@ -6,6 +6,7 @@
         public SummaryViewModel? Summary { get; set; }
 
 
+
         public class SummaryViewModel
         {
             public decimal Total { get; set; }

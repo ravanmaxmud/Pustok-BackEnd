@@ -121,7 +121,7 @@ namespace DemoApplication.Services.Concretes
         {
             await _httpContextAccessor.HttpContext!.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-
+            
         public async Task CreateAsync(RegisterViewModel model)
         {
      
@@ -146,8 +146,6 @@ namespace DemoApplication.Services.Concretes
             };
             await _dataContext.Baskets.AddAsync(basket);
 
-
-
             var productCookieValue = _httpContextAccessor.HttpContext!.Request.Cookies["products"];
             if (productCookieValue is not null)
             {
@@ -167,6 +165,7 @@ namespace DemoApplication.Services.Concretes
                     await _dataContext.BasketProducts.AddAsync(basketProduct);
                 }
             }
+
 
             await SendActivationUrl(user);
 
